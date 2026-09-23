@@ -1,0 +1,37 @@
+export default {
+  async fetch(request, env, ctx) {
+    const url = new URL(request.url);
+    const TARGET_PROPERTY_ID = "521876125";
+    const MANAGEMENT_ACCOUNT = "acf.net.business@gmail.com";
+
+    let modifiedHeaders = new Headers(request.headers);
+    modifiedHeaders.set("X-GA4-Property-Target", TARGET_PROPERTY_ID);
+    modifiedHeaders.set("X-Admin-Identity", MANAGEMENT_ACCOUNT);
+
+    const targetPayload = {
+      client_id: request.headers.get("cf-connecting-ip") || "anonymous_client",
+      events: [{
+        name: "system_heartbeat",
+        params: {
+          engagement_time_msec: "100",
+          session_id: url.searchParams.get("sid") || "active_mobile_session",
+          page_location: url.href,
+          page_title: "Compass OS Mobile Node"
+        }
+      }]
+    };
+
+    ctx.waitUntil(
+      fetch(`https://google-analytics.com{TARGET_PROPERTY_ID}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(targetPayload)
+      })
+    );
+
+    return new Response("New tracking telemetry worker is live.", {
+      status: 200,
+      headers: { "Content-Type": "text/plain" }
+    });
+  }
+};
