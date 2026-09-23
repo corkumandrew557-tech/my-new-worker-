@@ -1,0 +1,15 @@
+{
+  "name": "acf-worker",
+  "version": "1.0.0",
+  "description": "Compass OS Deployment Module",
+  "main": "index.js",
+  "scripts": {
+    "deploy": "wrangler deploy"
+  },
+  "devDependencies": {
+    "wrangler": "^3.0.0"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  }
+}
